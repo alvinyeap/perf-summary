@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { OpenAI } from "openai";
 
+export const runtime = "edge";
+
 import {
   SYSTEM_PROMPT,
   ASSISTANT_MSG,
@@ -66,11 +68,15 @@ const generateAiContent = async ({
   messages.push({ role: "user", content: DIRECTIONS_MSG });
 
   const openai = new OpenAI();
+  const start = Date.now();
   const resp = await openai.chat.completions.create({
     messages,
-    model: "gpt-4",
+    model: "gpt-4-1106-preview",
     temperature: 0.7,
+    response_format: { type: "json_object" },
   });
+  const end = Date.now();
+  console.log(end - start);
 
   if (resp.choices[0].message.content) {
     // TODO: Validation
